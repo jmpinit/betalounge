@@ -17,10 +17,6 @@ app.get("/", function(req, res){
 	res.render("index");
 });
  
-app.get("/", function(req, res){
-	res.send("It works!");
-});
-
 io.sockets.on('connection', function (socket) {
 	socket.emit('message', { message: 'server: hello there' });
 
