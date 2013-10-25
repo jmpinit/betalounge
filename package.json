@@ -1,0 +1,11 @@
+{
+    "name": "betalounge",
+    "version": "0.0.0",
+    "description": "Virtual playroom for MIT's 6.004 class.",
+    "dependencies": {
+        "socket.io": "latest",
+        "express": "latest",
+        "jade": "latest"
+    },
+    "author": "https://github.com/jmptable"
+}
