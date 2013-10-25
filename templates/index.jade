@@ -2,6 +2,17 @@
 html
 	head
 		title= "betalounge"
+		script(src='/betalounge.js')
+		script(src='/socket.io/socket.io.js')
 	body
 		h1 Beta Lounge
 		p A Multi-User Dungeon (MUD) for students to learn how computers work. Based on the Computational Structures class at MIT (6.004).
+
+		hr
+
+		p#status no status
+		
+		button#up up
+		button#down down
+		button#left left
+		button#right right
