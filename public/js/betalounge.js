@@ -1,5 +1,14 @@
 window.onload = function() {
-	var game;
+	var game = {
+		canvas: document.getElementById("screen"),
+		creatures: [],
+		add: function(creature, name) {
+			if(name)
+				creature.name = name;
+
+			game.creatures[creature.name] = creature;
+		}
+	}
 
 	var socket = io.connect('http://localhost:3700');
 
@@ -34,47 +43,94 @@ window.onload = function() {
 		}
 	});
 
-	load_images({
-		ply_up1:	"img/lounge/ash/ash_up1.png",
-		ply_up2:	"img/lounge/ash/ash_up2.png",
+	function Human(x, y, sprite_sources) {
+		this.name = "" + Math.random();
+		this.x = x;
+		this.y = y;
 
-		ply_down1:	"img/lounge/ash/ash_down1.png",
-		ply_down2:	"img/lounge/ash/ash_down2.png",
+		this.animation = 'up';
+		this.frame = 0;
+		this.framecount = 2;
 
-		ply_left1:	"img/lounge/ash/ash_left1.png",
-		ply_left2:	"img/lounge/ash/ash_left2.png",
+		// sprite loading
+		var newman = this;
+		load_images(sprite_sources, function(images) {
+			newman.sprites = images;
+			for(name in images) {
+				newman.sprite = images[name][0];
+				break;
+			}
+			newman.ready = true;
+			console.log(newman.name + " is ready!");
+		});
+		
+		this.ready = false;
+		
+		setInterval(function() { newman.animate(); }, 1000);
+	}
 
-		ply_right1:	"img/lounge/ash/ash_right1.png",
-		ply_right2:	"img/lounge/ash/ash_right2.png"
-	}, boot);
+	Human.prototype = {
+		animate: function() {
+			if(this.ready) {
+				this.frame++;
+				this.frame %= this.framecount;
+
+				this.sprite = this.sprites[this.animation][this.frame];
+			}
+		}
+	}
+
+	game.add(new Human(1, 1, {
+		up:	[
+			"img/lounge/ash/ash_up1.png",
+			"img/lounge/ash/ash_up2.png"
+		],
+
+		down: [
+			"img/lounge/ash/ash_down1.png",
+			"img/lounge/ash/ash_down2.png",
+		],
+
+		left: [
+			"img/lounge/ash/ash_left1.png",
+			"img/lounge/ash/ash_left2.png",
+		],
+
+		right: [
+			"img/lounge/ash/ash_right1.png",
+			"img/lounge/ash/ash_right2.png"
+		]
+	}), "player");
 
 	function load_images(sources, callback) {
 		var images = {};
 
 		var to_load = 0;
-		for(var i in sources) to_load++;
+		for(var i in sources)
+			for(var j in sources[i])
+				to_load++;
 
 		var loaded = 0;
-		for(src_name in sources) {
-			images[src_name] = new Image();
-			images[src_name].onload = function() {
-				if (++loaded >= to_load)
-					callback(images);
-			};
-			images[src_name].src = sources[src_name];
+		for(anim_name in sources) {
+			images[anim_name] = [];
+			for(i in sources[anim_name]) {
+				var img = new Image();
+
+				img.onload = function() {
+					if (++loaded >= to_load)
+						callback(images);
+				};
+				img.src = sources[anim_name][i];
+
+				images[anim_name].push(img);
+			}
 		}
 	} 
 
-	function boot(images) {
+	(function boot() {
 		console.log("booting")
-
-		game = {
-			canvas: document.getElementById("screen"),
-			sprites: images
-		}
-
 		animate();
-	}
+	})();
 
 	function animate() {
 		requestAnimationFrame(animate);
@@ -83,7 +139,12 @@ window.onload = function() {
 
 	function draw() {
 		var ctx = game.canvas.getContext('2d');
-		ctx.drawImage(game.sprites["ply_down1"], 0, 0);
+		
+		ctx.clearRect(0, 0, game.canvas.width, game.canvas.height);
+		for(var name in game.creatures) {
+			var c = game.creatures[name];
+			if(c.ready) ctx.drawImage(c.sprite, c.x, c.y);
+		}
 	}
 
 	// requestAnimFrame polyfill
