@@ -2,7 +2,13 @@
 html
 	head
 		title= "betalounge"
-		script(src='/betalounge.js')
+
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+		link(href="css/bootstrap.min.css" rel="stylesheet" media="screen")
+
+		script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
+		script(src='/js/keypress-1.0.8.min.js')
+		script(src='/js/betalounge.js')
 		script(src='/socket.io/socket.io.js')
 	body
 		h1 Beta Lounge
@@ -10,9 +16,12 @@ html
 
 		hr
 
-		p#status no status
-		
-		button#up up
-		button#down down
-		button#left left
-		button#right right
+		div.container
+			canvas#screen(width=512, height=512, style="margin: 0 auto; border: 2px solid #000")
+
+			p#status no status
+			
+			button#up up
+			button#down down
+			button#left left
+			button#right right

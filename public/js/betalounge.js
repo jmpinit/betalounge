@@ -20,4 +20,23 @@ window.onload = function() {
 	btnDown.onclick		= function() { socket.emit('send', { message: "down" }); };
 	btnLeft.onclick		= function() { socket.emit('send', { message: "left" }); };
 	btnRight.onclick	= function() { socket.emit('send', { message: "right" }); };
+
+	$(document.body).on('keydown', function(e) {
+		console.log(e.which);
+		switch (e.which) {
+			case 87: // W
+			break;
+
+			case 65: // A
+			break;
+
+			case 83: // S
+			break;
+
+			case 68: // D
+			break;
+		}
+	});
+
+	console.log("loaded");
 }
